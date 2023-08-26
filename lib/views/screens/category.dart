@@ -60,7 +60,7 @@ class _CategoryState extends State<Category> {
                   color: Colors.black38,
                 ),
                 Positioned(
-                  left: 130,
+                  left: 170,
                   top: 70,
                   child: Column(
                     children: [

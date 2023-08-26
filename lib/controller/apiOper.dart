@@ -14,7 +14,6 @@ class ApiOperations {
   static List<Photosmodel> searchWallpapersList = [];
   static List<CategoryModel> cateogryModelList = [];
 
-
   static Future<List<Photosmodel>> getTrendingWallpapers() async {
     await http.get(Uri.parse("https://api.pexels.com/v1/curated"), headers: {
       "Authorization":
@@ -41,14 +40,13 @@ class ApiOperations {
       List photos = jasonData['photos'];
       searchWallpapersList.clear();
       for (var element in photos) {
-        
         searchWallpapersList.add(Photosmodel.FromAPI2App(element));
       }
     });
     return searchWallpapersList;
   }
 
-  static List<CategoryModel> getCategoriesList() {
+  static Future<List<CategoryModel>> getCategoriesList() async {
     List cateogryName = [
       "Cars",
       "Nature",
@@ -58,18 +56,19 @@ class ApiOperations {
       "Flowers"
     ];
     cateogryModelList.clear();
-    cateogryName.forEach((catName) async {
-      // ignore: no_leading_underscores_for_local_identifiers
-      final _random = new Random();
 
-      Photosmodel photoModel =
-          (await searchWallpapers(catName))[0 + _random.nextInt(11 - 0)];
-      print("IMG SRC IS HERE");
-      print(photoModel.imgSrc);
-      cateogryModelList
-          .add(CategoryModel(catImgUrl: photoModel.imgSrc, catName: catName));
-    });
+    final _random = new Random();
 
+    for (String catName in cateogryName) {
+      List<Photosmodel> wallpapers = await searchWallpapers(catName);
+      if (wallpapers.isNotEmpty) {
+        Photosmodel photoModel = wallpapers[_random.nextInt(wallpapers.length)];
+        print("IMG SRC IS HERE");
+        print(photoModel.imgSrc);
+        cateogryModelList
+            .add(CategoryModel(catImgUrl: photoModel.imgSrc, catName: catName));
+      }
+    }
     return cateogryModelList;
   }
 }
